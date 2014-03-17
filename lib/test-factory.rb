@@ -1,4 +1,4 @@
-# Copyright 2012-2013 The rSmart Group, Inc.
+# Copyright 2012-2014 The rSmart Group, Inc.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,4 +13,5 @@
 # limitations under the License.
 
 require 'watir-webdriver'
+%w{foundry.rb data_factory.rb}.each { |f| require "#{File.dirname(__FILE__)}/test-factory/#{f}" }
 Dir["#{File.dirname(__FILE__)}/test-factory/*.rb"].each {|f| require f }

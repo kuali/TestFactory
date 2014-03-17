@@ -1,4 +1,4 @@
-# Copyright 2012-2013 The rSmart Group, Inc.
+# Copyright 2012-2014 The rSmart Group, Inc.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -107,7 +107,6 @@ module Enumerable
 
 end # Enumerable
 
-
 class Numeric
 
   # Converts a number object to a string containing commas every 3rd digit. Adds
@@ -121,3 +120,14 @@ class Numeric
   end
 
 end # Numeric
+
+class String
+
+  # Used to remove commas from long number strings,
+  # then converting the result to a Float so that it
+  # can be used in calculations.
+  def groom
+    self.gsub(',','').to_f
+  end
+
+end # String

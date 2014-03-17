@@ -1,4 +1,4 @@
-# Copyright 2012-2013 The rSmart Group, Inc.
+# Copyright 2012-2014 The rSmart Group, Inc.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -126,6 +126,12 @@ module Watir
     end
   end
 
+  class Radio
+    def fit(arg)
+      self.set if arg==:set
+    end
+  end
+
   module UserEditable
 
     # Extends Watir's methods.
@@ -166,6 +172,7 @@ module Watir
     # list and, assuming what you passed it was a class instance
     # variable, it will be updated to contain the
     # selected value (hence the ! in the method name).
+    # Note that this method will be slow with large selection lists.
     #
     # @example
     #   @my_selection='::random::'
@@ -180,15 +187,27 @@ module Watir
       end
     end
 
+    # Same as #pick!, except it does not change the
+    # value of 'item'
+    #
+    def pick(item)
+      if item=='::random::'
+        select_at_random
+      else
+        fit item
+      end
+    end
+
     private
 
     def select_at_random
-      text_array = []
-      options.each { |opt| text_array << opt.text }
-      text_array.delete_if { |text| text=='select' || text=='' }
-      item = text_array.sample
-      select item
-      item
+      ar = options.map(&:text)
+      sel = ar.sample
+      while sel=~/^select(.?)$/i || sel==''
+        sel = ar.sample
+      end
+      select sel
+      sel
     end
 
   end

@@ -1,4 +1,4 @@
-# Copyright 2012-2013 The rSmart Group, Inc.
+# Copyright 2012-2014 The rSmart Group, Inc.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,9 +32,9 @@ module Foundry
   # @param &block [C] this is the block of code that you want to run while on the given page
   #
   def on page_class, visit=false, &block
-    @current_page = page_class.new @browser, visit
-    block.call @current_page if block
-    @current_page
+    $current_page = page_class.new @browser, visit
+    block.call $current_page if block
+    $current_page
   end
   alias_method :on_page, :on
 

@@ -1,4 +1,4 @@
-rSmart's TestFactory Gem
+Kuali's TestFactory Gem
 =========================
 
 Overview
@@ -47,7 +47,7 @@ How to Start
 
 First install the gem, of course.
 
-    gem install test-factory
+    gem install kuali-test-factory
 
 Now you'll want to start building your own page classes, using the methods in TestFactory as your tool chest.
 
@@ -58,7 +58,7 @@ Please note that the following example is *very* simplified and contrived, to ke
 Begin by creating a BasePage class. This class should have PageFactory as its superclass and define sets of class elements that are generally common across the pages of your site.
 
 ```ruby
-require 'test-factory'
+require 'kuali-test-factory'
 
 class BasePage < PageFactory
 

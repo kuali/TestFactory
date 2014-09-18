@@ -116,7 +116,7 @@ class PageFactory
     # @example
     #   link("Click Me For Fun!", :click_me) => Creates the methods #click_me and #click_me_link
     #
-    def link(link_text, *alias_name)
+    def link link_text, *alias_name
       elementize(:link, link_text, *alias_name)
     end
 
@@ -143,19 +143,65 @@ class PageFactory
     # @example
     #   link("Click Me For Fun!", :click_me) => Creates the methods #click_me and #click_me_link
     #
-    def button(button_text, *alias_name)
+    def button button_text, *alias_name
       elementize(:button, button_text, *alias_name)
+    end
+
+    # TestFactory doesn't allow defining a method in a child class
+    # with the same name as one already defined in a parent class.
+    # The thinking here is: "Out of sight, out of mind." Meaning:
+    # you or a team mate might not know or have forgotten that a given
+    # element is already defined in a parent class, and so define it
+    # again. TestFactory's restriction is there to help prevent this.
+    #
+    # However, in some cases you may have a child page class with a
+    # special circumstance, where the parent class's version of the
+    # method really doesn't apply, and you want to use the same method
+    # name in this child class because, really, no other method name
+    # would fit quite as well.
+    #
+    # The #undefine method is for those rare cases. Note: If you start
+    # using this method a lot then you should consider that a sign
+    # that perhaps you're putting too many method definitions into
+    # parent page classes.
+    #
+    # @example
+    #   undefine :status, :doc_id => Undefines the specified methods in the current class
+    #
+    def undefine *methods
+      methods.each{ |m| undef_method m }
+    end
+
+    def inherited klass
+      klass.instance_eval {
+
+        # Creates a method, #wait_for_ajax, usable in your Page Classes, that executes
+        # the 'jQuery.active' Javascript snippet each second until timeout.
+        #
+        # If timeout is exceeded, raises Watir::Wait::TimeoutError exception. The returned error
+        # message is customizable.
+        #
+        define_method 'wait_for_ajax' do |timeout=10, message|
+          timeout.times do
+            sleep 0.3
+            return true if @browser.execute_script('return jQuery.active').to_i == 0
+            sleep 0.7
+          end
+          raise Watir::Wait::TimeoutError, "Ajax calls continued beyond #{timeout} seconds. #{message}"
+        end
+
+      }
     end
 
     private
     # A helper method that converts the passed string into snake case. See the StringFactory
     # module for more info.
     #
-    def damballa(text)
+    def damballa text
       StringFactory.damballa(text)
     end
 
-    def elementize(type, text, *alias_name)
+    def elementize type, text, *alias_name
       hash={:link=>:text, :button=>:value}
       if alias_name.empty?
         el_name=damballa("#{text}_#{type}")
